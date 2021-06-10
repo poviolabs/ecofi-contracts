@@ -66,6 +66,7 @@ contract SproutToken is ERC20Burnable {
     {
         mEcoFiTokenContract = _baseTokenContract; // ECO token contract address
         mEcoFi = _ecoFiAddress; // ECO address for generation share
+        _mint(_ecoFiAddress, 10*10**6*10**18);
     }
 
     /**

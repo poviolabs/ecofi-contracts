@@ -39,7 +39,7 @@ function ContractLayout() {
   const initializeProvider = () => {
 
     // display contractRoot
-    console.log(contractRoot);
+    // console.log(contractRoot);
 
     // initialize provider depending on network
       Object.keys(contractRoot).map(async network => {
@@ -97,7 +97,7 @@ function ContractLayout() {
   }
 
   useEffect(() => {
-      setActiveTab('EcoFiERC1155');
+      setActiveTab('EcoFiExchangeV2');
 
       // on first call, initialize web3Provider
       if (web3Provider === null)
@@ -105,7 +105,7 @@ function ContractLayout() {
       
       if (refreshingContract)
       {
-        refreshContract('EcoFiERC1155');
+        refreshContract('EcoFiExchangeV2');
       }
     }, [refreshingContract]);
 

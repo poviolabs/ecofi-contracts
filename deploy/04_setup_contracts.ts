@@ -31,16 +31,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     contractsDir + "/all.json",
     JSON.stringify(exp, null, 2)
   );
-  
-  /* fs.writeFileSync(
-    contractsDir + "/eco-contract-address.json",
-    JSON.stringify({ EcoToken: ecoToken.address }, undefined, 2)
-  );
-
-  fs.writeFileSync(
-    contractsDir + "/sprout-contract-address.json",
-    JSON.stringify({ SproutToken: sproutToken.address }, undefined, 2)
-  ); */
 
   fs.writeFileSync(
     contractsDir + "/EcoToken.json",
@@ -50,6 +40,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   fs.writeFileSync(
     contractsDir + "/SproutToken.json",
     JSON.stringify(hre.artifacts.readArtifactSync("SproutToken"), null, 2)
+  );
+
+  fs.writeFileSync(
+    contractsDir + "/EcoFiERC1155.json",
+    JSON.stringify(hre.artifacts.readArtifactSync("EcoFiERC1155"), null, 2)
+  );
+
+  fs.writeFileSync(
+    contractsDir + "/EcoFiExchangeV2.json",
+    JSON.stringify(hre.artifacts.readArtifactSync("EcoFiExchangeV2"), null, 2)
   );
 };
 export default func;
