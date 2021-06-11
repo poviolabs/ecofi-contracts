@@ -1,5 +1,5 @@
 import { recoverTypedSignature_v4 } from "eth-sig-util";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Button,
@@ -20,6 +20,10 @@ const ETH_ASSET_CLASS = "0xaaaebeba";
 const ERC20_ASSET_CLASS = "0x8ae85d84";
 const ERC1155_ASSET_CLASS = "0x973bb640";
 const ECO_TOKEN_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const SPRT_TOKEN_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const EXC_CONTRACT_ADDRESS = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
+const ERC20_PROXY_ADDRESS = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
+const ERC1155_PROXY_ADDRESS = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
 
 const SIG_BODY = {
   domain: {
@@ -73,6 +77,7 @@ function ContractExcExplorer(props) {
   const [metamaskProvider, setMetamaskProvider] =
     useState<ethers.providers.Web3Provider>(null);
   const [contract, setContract] = useState(null);
+  const [tokenContract, setTokenContract] = useState(null);
   const [readOnlyContract, setReadOnlyContract] = useState(null);
   const [refreshingContract, setRefreshingContract] = useState(false);
   const [contractOwner, setContractOwner] = useState(null);
@@ -86,11 +91,15 @@ function ContractExcExplorer(props) {
   const [sendOwnerAddress, setSendOwnerAddress] = useState(
     "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
   );
+  const [sendTokenAddress, setSendTokenAddress] = useState(
+    ECO_TOKEN_ADDRESS
+  );
   const [sendRecieverAddress, setSendRecieverAddress] = useState(
     "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
   );
   const [sendId, setSendId] = useState("1");
   const [sendAmount, setSendAmount] = useState("1");
+  const [sendAllowAmount, setSendAllowAmount] = useState("1");
 
   const [sellSignature, setSellSignature] = useState("");
   const [sellOrder, setSellOrder] = useState(undefined);
@@ -99,7 +108,7 @@ function ContractExcExplorer(props) {
 
   const initializeProvider = () => {
     // display contractRoot
-    // console.log(contractRoot);
+    console.log(contractRoot);
 
     // initialize provider depending on network
     Object.keys(contractRoot).map(async (network) => {
@@ -157,6 +166,30 @@ function ContractExcExplorer(props) {
     setRefreshingContract(false);
   };
 
+  const updateTokenContract = async (name: string) => {
+    let contractAddress, contractAbi, metamaskContract;
+
+    //Object.keys(contractRoot.contracts).map(contractName => {
+    contractAddress = contractRoot.contracts[name].address;
+    contractAbi = contractRoot.contracts[name].abi;
+    //})
+
+    console.log(contractAddress);
+
+    await window.ethereum.enable();
+    metamaskContract = new ethers.Contract(
+      contractAddress,
+      contractAbi,
+      metamaskProvider.getSigner()
+    );
+
+    setTokenContract(metamaskContract);
+    
+    setRefreshingContract(false);
+    
+    return metamaskContract;
+  };
+
   useEffect(() => {
     // on first call, initialize web3Provider
     if (web3Provider === null) initializeProvider();
@@ -182,7 +215,7 @@ function ContractExcExplorer(props) {
         makeAsset: {
           assetType: {
             assetClass: ERC1155_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, 1])
+            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, BigNumber.from(sendOwnerAddress).shl(96).add(sendId).toHexString()])
           },
           value: 1,
         },
@@ -257,7 +290,7 @@ function ContractExcExplorer(props) {
         takeAsset: {
           assetType: {
             assetClass: ERC1155_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, 1])
+            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, BigNumber.from(sendOwnerAddress).shl(96).add(sendId).toHexString()])
           },
           value: 1,
         },
@@ -334,6 +367,39 @@ function ContractExcExplorer(props) {
     setInProgress(false);
   };
 
+  const handleAllowance = async (event) => {
+    event.preventDefault();
+    setInProgress(true);
+
+    setLogText(
+      `Allow ${sendAllowAmount} tokens from address ${sendTokenAddress} to address ${sendRecieverAddress}...`
+    );
+    setReceiptLink(null);
+
+    let result;
+
+    try {
+      const ctr = await updateTokenContract('EcoFiToken');
+      console.log(tokenContract);
+      result = await ctr.approve(
+        ERC20_PROXY_ADDRESS,
+        ethers.utils.defaultAbiCoder.encode(['uint256'],[convert(sendAllowAmount)])
+      );
+    } catch (e) {
+      console.log(e);
+      result = e;
+    }
+
+    try {
+      setLogText(result.toString());
+    } catch (e) {}
+    setInProgress(false);
+  };
+
+  const convert = (input) => {
+    return BigNumber.from(input).mul(BigNumber.from(10).pow(18));
+  }
+
   return (
     <>
       <Fragment key={props.contract}>
@@ -341,6 +407,42 @@ function ContractExcExplorer(props) {
         <h6>Address: {contractRoot.contracts[props.contract].address}</h6>
         <h6>Owner: {contractOwner ? contractOwner : "Loading..."}</h6>
         <Row>
+        <Col sm="4">
+            <Card>
+              <CardBody>
+                <CardTitle tag="h5">Allow spend</CardTitle>
+
+                <Form>
+                  <FormGroup>
+                    <Label for="tokenAddressId">Token Address</Label>
+
+                    <Input
+                      name="tokenAddress"
+                      id="tokenAddressId"
+                      placeholder="0x..."
+                      value={sendTokenAddress}
+                      onChange={(e) => setSendTokenAddress(e.target.value)}
+                    />
+
+                    <Label for="amountToAllowId">Allow amount</Label>
+
+                    <Input
+                      type="number"
+                      name="amountToAllow"
+                      id="amountToAllowId"
+                      placeholder="0"
+                      value={sendAllowAmount}
+                      onChange={(e) => setSendAllowAmount(e.target.value)}
+                    />
+                  </FormGroup>
+
+                  <Button disabled={inProgress} onClick={handleAllowance}>
+                    Set allowance
+                  </Button>
+                </Form>
+              </CardBody>
+            </Card>
+          </Col>
           <Col sm="4">
             <Card>
               <CardBody>

@@ -28,14 +28,8 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
     }
 
     function mintWithImage(LibERC1155LazyMint.Mint1155Data memory data, string memory image, address to, uint256 _amount) public virtual {
-        // mintAndTransfer(data, to, _amount);
-        console.log("TokenID before", data.tokenId);
-        address minter = _msgSender();
+        address minter = address(data.tokenId >> 96);
         address sender = _msgSender();
-
-        console.log("Minter", minter);
-        console.log("Sender", sender);
-        console.log("TokenID", data.tokenId >> 96);
 
         require(minter == data.creators[0].account, "tokenId incorrect");
         require(data.creators.length == data.signatures.length);

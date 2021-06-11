@@ -16,6 +16,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   const deps = await deployments.all();
+  const erc1155 = deps['EcoFiERC1155'];
   const erc20_p = deps['ERC20TransferProxy'];
   const nft_p = deps['NftTransferProxy'];
 
@@ -24,13 +25,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     nft_p.address, 
     erc20_p.address,
     '10000', 
-    '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    from,
     deps['EcoFiERC1155'].address);
 
-    const erc20ProxyContract = new ethers.Contract(erc20_p.address, erc20_p.abi);
-    await erc20ProxyContract.connect(deployer).addOperator(contract.address);
-  
-    const nftProxyContract = new ethers.Contract(nft_p.address, nft_p.abi);
-    await nftProxyContract.connect(deployer).addOperator(contract.address);
+  const erc20ProxyContract = new ethers.Contract(erc20_p.address, erc20_p.abi);
+  await erc20ProxyContract.connect(deployer).addOperator(contract.address);
+
+  const nftProxyContract = new ethers.Contract(nft_p.address, nft_p.abi);
+  await nftProxyContract.connect(deployer).addOperator(contract.address);
+
+  const nftContract = new ethers.Contract(erc1155.address, erc1155.abi);
+  // await nftContract.connect(deployer).transferOwnership(nft_p.address);
+  await nftContract.connect(deployer).setApprovalForAll(nft_p.address, true);
 };
 export default func;
