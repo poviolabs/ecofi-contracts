@@ -31,17 +31,20 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
         address minter = address(data.tokenId >> 96);
         address sender = _msgSender();
 
-        require(minter == data.creators[0].account, "tokenId incorrect");
-        require(data.creators.length == data.signatures.length);
         require(minter == sender || isApprovedForAll(minter, sender), "ERC1155: transfer caller is not approved");
-
-        require(data.supply > 0, "supply incorrect");
         require(_amount > 0, "amount incorrect");
-        require(bytes(data.uri).length > 0, "uri should be set");
 
         if (_getSupply(data.tokenId) == 0) {
+            require(minter == data.creators[0].account, "tokenId incorrect");
+            require(data.supply > 0, "supply incorrect");
+            require(data.creators.length == data.signatures.length);
+
+            bytes32 hash = LibERC1155LazyMint.hash(data);
             for (uint i = 0; i < data.creators.length; i++) {
-                validate(sender, data, i);
+                address creator = data.creators[i].account;
+                if (creator != sender) {
+                    validate(creator, hash, data.signatures[i]);
+                }
             }
 
             _saveSupply(data.tokenId, data.supply);

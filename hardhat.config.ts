@@ -13,7 +13,7 @@ export default {
     [
       { version: "0.5.12", settings: {} },
       { version: "0.6.8", settings: {} },
-      { version: "0.7.5", settings: {} },
+      { version: "0.7.6", settings: {} },
       { version: "0.8.0", settings: {} }
     ],
   },

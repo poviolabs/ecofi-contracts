@@ -11571,7 +11571,7 @@ protocol-buffers-schema@^3.3.1:
 
 "protocol-contracts@github:poviolabs/protocol-contracts#master":
   version "0.0.0"
-  resolved "https://codeload.github.com/poviolabs/protocol-contracts/tar.gz/2f7f7f552cbc943ec356184cb29d8cbf13feb85f"
+  resolved "https://codeload.github.com/poviolabs/protocol-contracts/tar.gz/7b837bce245dfff6abab8bd1e6a936a173fe77ba"
 
 protons@^2.0.0:
   version "2.0.1"
