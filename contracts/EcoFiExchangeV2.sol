@@ -12,7 +12,7 @@ contract EcoFiExchangeV2 is ExchangeV2Core, RaribleTransferManager {
         INftTransferProxy _transferProxy,
         IERC20TransferProxy _erc20TransferProxy,
         uint newProtocolFee,
-        address newDefaultFeeReceiver,
+        address payable newDefaultFeeReceiver,
         IRoyaltiesProvider newRoyaltiesProvider
     ) external initializer {
         __Context_init_unchained();

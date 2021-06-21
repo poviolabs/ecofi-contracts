@@ -16,17 +16,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   const deps = await deployments.all();
-  const erc1155 = deps['EcoFiERC1155'];
   const erc20_p = deps['ERC20TransferProxy'];
   const nft_p = deps['NftTransferProxy'];
+  const roy_p = deps['EcoRoyaltiesRegistry'];
 
   const exchangeContract = new ethers.Contract(contract.address, contract.abi);
   await exchangeContract.connect(deployer).__EcoExchangeV2_init(
     nft_p.address, 
     erc20_p.address,
-    '10000', 
+    '50', // 0.5% exchange fee
     from,
-    deps['EcoFiERC1155'].address);
+    roy_p.address);
 
   const erc20ProxyContract = new ethers.Contract(erc20_p.address, erc20_p.abi);
   await erc20ProxyContract.connect(deployer).addOperator(contract.address);
@@ -34,8 +34,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const nftProxyContract = new ethers.Contract(nft_p.address, nft_p.abi);
   await nftProxyContract.connect(deployer).addOperator(contract.address);
 
-  const nftContract = new ethers.Contract(erc1155.address, erc1155.abi);
-  // await nftContract.connect(deployer).transferOwnership(nft_p.address);
-  await nftContract.connect(deployer).setApprovalForAll(nft_p.address, true);
 };
 export default func;

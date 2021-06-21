@@ -14,7 +14,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true
   });
 
+  const deps = await deployments.all();
+  const nft_p = deps['NftTransferProxy'];
+
   const mintContract = new ethers.Contract(contract.address, contract.abi);
-  await mintContract.connect(deployer).__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://hyp.eco');
+  await mintContract.connect(deployer).__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://hyp.eco', nft_p.address);
 };
 export default func;

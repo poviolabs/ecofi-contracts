@@ -17,8 +17,6 @@ declare global {
   }
 }
 
-const EXC_CONTRACT_ADDRESS = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
-
 function ContractExplorer(props) {
 
   const [activeTab, setActiveTab] = useState('');
@@ -38,9 +36,9 @@ function ContractExplorer(props) {
   const [inProgress, setInProgress] = useState(false);
 
   // froms
-  const [mintOwnerAddress, setMintOwnerAddress] = useState('0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266');
-  const [mintQuantity, setMintQuantity] = useState('1');
-  const [mintSupply, setMintSupply] = useState('1');
+  const [mintOwnerAddress, setMintOwnerAddress] = useState('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC');
+  const [mintQuantity, setMintQuantity] = useState('10');
+  const [mintSupply, setMintSupply] = useState('10');
   const [mintId, setMintId] = useState('1');
 
   const [sendOwnerAddress, setSendOwnerAddress] = useState('0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266');
@@ -184,7 +182,7 @@ function ContractExplorer(props) {
           {account: mintOwnerAddress, value: 10000}
         ],
         royalties: [
-          {account: mintOwnerAddress, value: 10000}
+          {account: mintOwnerAddress, value: 1000}
         ]
       };
 

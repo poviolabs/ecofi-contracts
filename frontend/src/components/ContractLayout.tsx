@@ -129,10 +129,10 @@ function ContractLayout() {
 
       <TabContent activeTab={activeTab}>
         <TabPane tabId={'EcoFiERC1155'}>
-          <ContractExplorer contract={'EcoFiERC1155'}></ContractExplorer>
+          <ContractExplorer contract={'EcoFiERC1155'} active={activeTab}></ContractExplorer>
         </TabPane>
         <TabPane tabId={'EcoFiExchangeV2'}>
-          <ContractExcExplorer contract={'EcoFiExchangeV2'}></ContractExcExplorer>
+          <ContractExcExplorer contract={'EcoFiExchangeV2'} active={activeTab}></ContractExcExplorer>
         </TabPane>
       </TabContent>
     </>

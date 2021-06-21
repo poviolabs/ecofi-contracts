@@ -1,5 +1,5 @@
 import { recoverTypedSignature_v4 } from "eth-sig-util";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Button,
@@ -21,49 +21,44 @@ const ERC20_ASSET_CLASS = "0x8ae85d84";
 const ERC1155_ASSET_CLASS = "0x973bb640";
 const ECO_TOKEN_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const SPRT_TOKEN_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-const EXC_CONTRACT_ADDRESS = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
-const ERC20_PROXY_ADDRESS = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
-const ERC1155_PROXY_ADDRESS = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
 
-const SIG_BODY = {
-  domain: {
-    // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-    chainId: 1337,
-    // Give a user friendly name to the specific contract you are signing for.
-    name: "Exchange",
-    // Just let's you know the latest version. Definitely make sure the field name is correct.
-    version: "2",
-    verifyingContract: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-  },
-  primaryType: "Order",
-  types: {
-    // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      { name: "name", type: "string" },
-      { name: "version", type: "string" },
-      { name: "chainId", type: "uint256" },
-      { type: "address", name: "verifyingContract" },
-    ],
-    Order: [
-      { type: "address", name: "maker" },
-      { type: "Asset", name: "makeAsset" },
-      { type: "address", name: "taker" },
-      { type: "Asset", name: "takeAsset" },
-      { type: "uint256", name: "salt" },
-      { type: "uint256", name: "start" },
-      { type: "uint256", name: "end" },
-      { type: "bytes4", name: "dataType" },
-      { type: "bytes", name: "data" },
-    ],
-    Asset: [
-      { type: "AssetType", name: "assetType" },
-      { type: "uint256", name: "value" },
-    ],
-    AssetType: [
-      { type: "bytes4", name: "assetClass" },
-      { type: "bytes", name: "data" },
-    ],
-  },
+const SIG_BODY = ({chainId, verifyingContract}) => {
+  return {
+    domain: {
+      chainId,
+      name: "Exchange",
+      version: "2",
+      verifyingContract,
+    },
+    primaryType: "Order",
+    types: {
+      EIP712Domain: [
+        { name: "name", type: "string" },
+        { name: "version", type: "string" },
+        { name: "chainId", type: "uint256" },
+        { type: "address", name: "verifyingContract" },
+      ],
+      Order: [
+        { type: "address", name: "maker" },
+        { type: "Asset", name: "makeAsset" },
+        { type: "address", name: "taker" },
+        { type: "Asset", name: "takeAsset" },
+        { type: "uint256", name: "salt" },
+        { type: "uint256", name: "start" },
+        { type: "uint256", name: "end" },
+        { type: "bytes4", name: "dataType" },
+        { type: "bytes", name: "data" },
+      ],
+      Asset: [
+        { type: "AssetType", name: "assetType" },
+        { type: "uint256", name: "value" },
+      ],
+      AssetType: [
+        { type: "bytes4", name: "assetClass" },
+        { type: "bytes", name: "data" },
+      ],
+    },
+  }
 };
 
 declare global {
@@ -76,7 +71,7 @@ function ContractExcExplorer(props) {
   const [web3Provider, setWeb3Provider] = useState(null);
   const [metamaskProvider, setMetamaskProvider] =
     useState<ethers.providers.Web3Provider>(null);
-  const [contract, setContract] = useState(null);
+  const [contract, setContract] = useState<Contract>(null);
   const [tokenContract, setTokenContract] = useState(null);
   const [readOnlyContract, setReadOnlyContract] = useState(null);
   const [refreshingContract, setRefreshingContract] = useState(false);
@@ -89,7 +84,7 @@ function ContractExcExplorer(props) {
 
   // forms
   const [sendOwnerAddress, setSendOwnerAddress] = useState(
-    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+    "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
   );
   const [sendTokenAddress, setSendTokenAddress] = useState(
     ECO_TOKEN_ADDRESS
@@ -97,8 +92,9 @@ function ContractExcExplorer(props) {
   const [sendRecieverAddress, setSendRecieverAddress] = useState(
     "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
   );
-  const [sendId, setSendId] = useState("1");
+  const [sendId, setSendId] = useState("27260337350786580164241416129611462941146473970058656530868906316215946838017");
   const [sendAmount, setSendAmount] = useState("1");
+  const [sendCurAmount, setSendCurAmount] = useState("1");
   const [sendAllowAmount, setSendAllowAmount] = useState("1");
 
   const [sellSignature, setSellSignature] = useState("");
@@ -142,6 +138,7 @@ function ContractExcExplorer(props) {
   };
 
   const refreshContract = async (name: string) => {
+    console.log("refreshing");
     let contractAddress, contractAbi, erc1155, metamaskContract;
 
     //Object.keys(contractRoot.contracts).map(contractName => {
@@ -197,7 +194,7 @@ function ContractExcExplorer(props) {
     if (refreshingContract) {
       refreshContract("EcoFiExchangeV2");
     }
-  }, [refreshContract, refreshingContract, web3Provider]);
+  }, [refreshingContract]);
 
   const handleSellSig = async (event) => {
     event.preventDefault();
@@ -215,27 +212,39 @@ function ContractExcExplorer(props) {
         makeAsset: {
           assetType: {
             assetClass: ERC1155_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, BigNumber.from(sendOwnerAddress).shl(96).add(sendId).toHexString()])
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['address', 'uint'],
+              [contractRoot.contracts['EcoFiERC1155'].address, sendId]
+            )
           },
           value: 1,
         },
         taker: "0x0000000000000000000000000000000000000000",
         takeAsset: {
           assetType: {
-            assetClass: ERC20_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiToken'].address, 1]),
+            assetClass: ETH_ASSET_CLASS,
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['uint'],
+              [1]
+            ),
+            /* assetClass: ERC20_ASSET_CLASS,
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['address', 'uint'],
+              [contractRoot.contracts['EcoFiToken'].address, 1]
+            ), */
           },
-          value: ethers.utils.defaultAbiCoder.encode(['uint256'],[2]),
+          value: ethers.utils.defaultAbiCoder.encode(['uint256'],[convert(sendCurAmount)]),
+          // value: ethers.utils.defaultAbiCoder.encode(['uint256'],[sendCurAmount]),
         },
-        salt: 1623305370620,
+        salt: Date.now(),
         start: 0,
-        end: 1623305370620 + 1000 * 60 * 60 * 24 * 7,
+        end: Date.now() + 1000 * 60 * 60 * 24 * 7,
         dataType: "0xffffffff",
         data: sendOwnerAddress,
       };
 
       const msgParams = JSON.stringify({
-        ...SIG_BODY,
+        ...SIG_BODY({chainId: 1337, verifyingContract: contractRoot.contracts['EcoFiExchangeV2'].address}),
         message: order,
       });
 
@@ -281,28 +290,40 @@ function ContractExcExplorer(props) {
         maker: sendRecieverAddress,
         makeAsset: {
           assetType: {
-            assetClass: ERC20_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiToken'].address, 1])
+            assetClass: ETH_ASSET_CLASS,
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['uint'],
+              [1]
+            ),
+            /* assetClass: ERC20_ASSET_CLASS,
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['address', 'uint'],
+              [contractRoot.contracts['EcoFiToken'].address, 1]
+            ) */
           },
-          value: ethers.utils.defaultAbiCoder.encode(['uint256'],[2]),
+          value: ethers.utils.defaultAbiCoder.encode(['uint256'],[convert(sendCurAmount)]),
+          // value: ethers.utils.defaultAbiCoder.encode(['uint256'],[sendCurAmount]),
         },
         taker: sendOwnerAddress,
         takeAsset: {
           assetType: {
             assetClass: ERC1155_ASSET_CLASS,
-            data: ethers.utils.defaultAbiCoder.encode(['address', 'uint'],[contractRoot.contracts['EcoFiERC1155'].address, BigNumber.from(sendOwnerAddress).shl(96).add(sendId).toHexString()])
+            data: ethers.utils.defaultAbiCoder.encode(
+              ['address', 'uint'],
+              [contractRoot.contracts['EcoFiERC1155'].address, sendId]
+            )
           },
           value: 1,
         },
-        salt: 1623305370620,
+        salt: Date.now(),
         start: 0,
-        end: 1623305370620 + 1000 * 60 * 60 * 24 * 7,
+        end: Date.now() + 1000 * 60 * 60 * 24 * 7,
         dataType: "0xffffffff",
-        data: sendOwnerAddress,
+        data: sendRecieverAddress,
       };
 
       const msgParams1 = JSON.stringify({
-        ...SIG_BODY,
+        ...SIG_BODY({chainId: 1337, verifyingContract: contractRoot.contracts['EcoFiExchangeV2'].address}),
         message: order,
       });
 
@@ -317,7 +338,7 @@ function ContractExcExplorer(props) {
         data: JSON.parse(
           JSON.stringify({
             message: order,
-            ...SIG_BODY,
+            ...SIG_BODY({chainId: 1337, verifyingContract: contractRoot.contracts['EcoFiExchangeV2'].address}),
           })
         ),
         sig: result,
@@ -348,14 +369,19 @@ function ContractExcExplorer(props) {
     setReceiptLink(null);
 
     let result;
+    const overrides = {
+      value: convert(sendCurAmount).add(convert(1).div(50)),
+    }
 
     try {
       result = await contract.matchOrders(
         sellOrder,
         sellSignature,
         buyOrder,
-        buySignature
+        buySignature,
+        overrides
       );
+      console.log(result);
     } catch (e) {
       console.log(e);
       result = e;
@@ -382,7 +408,7 @@ function ContractExcExplorer(props) {
       const ctr = await updateTokenContract('EcoFiToken');
       console.log(tokenContract);
       result = await ctr.approve(
-        ERC20_PROXY_ADDRESS,
+        contractRoot.contracts['ERC20TransferProxy'].address,
         ethers.utils.defaultAbiCoder.encode(['uint256'],[convert(sendAllowAmount)])
       );
     } catch (e) {
@@ -488,6 +514,15 @@ function ContractExcExplorer(props) {
                       placeholder="0"
                       value={sendAmount}
                       onChange={(e) => setSendAmount(e.target.value)}
+                    />
+                    <Label for="amountToSendCurId">Price</Label>
+                    <Input
+                      type="number"
+                      name="amountToSendCur"
+                      id="amountToSendCurId"
+                      placeholder="0"
+                      value={sendCurAmount}
+                      onChange={(e) => setSendCurAmount(e.target.value)}
                     />
                   </FormGroup>
 

@@ -22,10 +22,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true
   });
 
+  const roy_p = await deploy('EcoRoyaltiesRegistry', {
+    from,
+    gasLimit: 9500000,
+    args: [],
+    log: true
+  });
+
   const erc20ProxyContract = new ethers.Contract(erc20_p.address, erc20_p.abi);
   await erc20ProxyContract.connect(deployer).__ERC20TransferProxy_init();
 
   const nftProxyContract = new ethers.Contract(nft_p.address, nft_p.abi);
   await nftProxyContract.connect(deployer).__NftTransferProxy_init();
+
+  const royProxyContract = new ethers.Contract(roy_p.address, roy_p.abi);
+  await royProxyContract.connect(deployer).__RoyaltiesRegistry_init();
 };
 export default func;

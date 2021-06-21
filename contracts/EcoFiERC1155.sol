@@ -11,7 +11,7 @@ import "./lib/ERC1155Image.sol";
 contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
     event CreateEcoFiERC1155(address owner, string name, string symbol);
 
-    function __EcoFiERC1155_init(string memory _name, string memory _symbol, string memory baseURI, string memory contractURI) external initializer {
+    function __EcoFiERC1155_init(string memory _name, string memory _symbol, string memory baseURI, string memory contractURI, address _address) external initializer {
         __Ownable_init_unchained();
         __ERC1155Lazy_init_unchained();
         __ERC165_init_unchained();
@@ -23,7 +23,7 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
         __RoyaltiesV2Upgradeable_init_unchained();
         __ERC1155Base_init_unchained(_name, _symbol);
         _setBaseURI(baseURI);
-        _setDefaultApproval(_msgSender(), true); // set the contract deployer as approved
+        _setDefaultApproval(_address, true); // set the contract deployer as approved
         emit CreateEcoFiERC1155(_msgSender(), _name, _symbol);
     }
 
@@ -56,5 +56,6 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
 
         _mint(to, data.tokenId, _amount, "");
     }
+
     uint256[50] private __gap;
 }
