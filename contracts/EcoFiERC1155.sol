@@ -50,7 +50,7 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
             _saveSupply(data.tokenId, data.supply);
             _saveRoyalties(data.tokenId, data.royalties);
             _saveCreators(data.tokenId, data.creators);
-            _setTokenURI(data.tokenId, data.uri);
+            _setTokenURI(data.tokenId, data.tokenURI);
             _setTokenImage(data.tokenId, image);
         }
 

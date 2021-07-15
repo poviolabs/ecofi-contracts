@@ -62,13 +62,20 @@ module.exports = {
           "https://ropsten.infura.io/v3/" + process.env.INFURA_API_KEY
         );
       },
-      network_id: 2
-      // gas: 4700000
+      network_id: 3,
+      gasPrice: 25000000000, // 25 GWEI
+      gas: 6721975
     }
   },
   compilers: {
     solc: {
-      version: "0.5.12"
+      version: "0.7.6",
+      settings: {
+        optimizer: {
+          enabled: true, // Default: false
+          runs: 1000 // Default: 200
+        }
+      }
     }
   }  
 };

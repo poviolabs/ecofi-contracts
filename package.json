@@ -11,7 +11,10 @@
     "hardhat:start": "hardhat node",
     "hardhat:list": "hardhat addresses",
     "hardhat:deploy:local": "hardhat deploy --export frontend/src/contracts.json --network localhost",
-    "truffle:contract-size": "truffle run contract-size"
+    "truffle:contract-size": "truffle run contract-size --contracts EcoFiERC1155 EcoFiExchangeV2 SproutToken EcoToken",
+    "truffle:compile": "truffle compile",
+    "truffle:deploy-ropsten": "truffle deploy --network ropsten",
+    "truffle:migrate-ropsten": "truffle migrate --network ropsten"
   },
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "3.4.0",
@@ -32,7 +35,7 @@
     "hardhat": "^2.3.0",
     "hardhat-deploy": "^0.7.9",
     "hardhat-deploy-ethers": "^0.3.0-beta.7",
-    "protocol-contracts": "github:poviolabs/protocol-contracts#master",
+    "protocol-contracts": "github:poviolabs/protocol-contracts#release-0.0.1",
     "truffle": "^5.3.9",
     "truffle-assertions": "0.9.2",
     "truffle-contract-size": "^2.0.1",

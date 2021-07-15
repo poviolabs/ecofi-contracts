@@ -11569,9 +11569,9 @@ protocol-buffers-schema@^3.3.1:
   resolved "https://registry.yarnpkg.com/protocol-buffers-schema/-/protocol-buffers-schema-3.5.1.tgz#8388e768d383ac8cbea23e1280dfadb79f4122ad"
   integrity sha512-YVCvdhxWNDP8/nJDyXLuM+UFsuPk4+1PB7WGPVDzm3HTHbzFLxQYeW2iZpS4mmnXrQJGBzt230t/BbEb7PrQaw==
 
-"protocol-contracts@github:poviolabs/protocol-contracts#master":
+"protocol-contracts@github:poviolabs/protocol-contracts#release-0.0.1":
   version "0.0.0"
-  resolved "https://codeload.github.com/poviolabs/protocol-contracts/tar.gz/7b837bce245dfff6abab8bd1e6a936a173fe77ba"
+  resolved "https://codeload.github.com/poviolabs/protocol-contracts/tar.gz/6b63b3b836bf03ea4a61795fa9a9000dabee91e3"
 
 protons@^2.0.0:
   version "2.0.1"
