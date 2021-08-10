@@ -36,13 +36,14 @@ module.exports = {
       provider() {
         // using wallet at index 1 ----------------------------------------------------------------------------------------v
         return new HDWalletProvider(
-          process.env.TESTNET_MNEMONIC,
+          process.env.MAINNET_MNEMONIC,
           "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY,
           1
         );
       },
-      network_id: 1
+      network_id: 1,
       // gas: 5561260
+      gasPrice: 42000000000 // 42 GWEI
     },
     rinkeby: {
       provider() {
