@@ -18,7 +18,8 @@
     "truffle:migrate-mainnet-first": "truffle migrate --network mainnet -f 1 --to 1",
     "truffle:migrate-mainnet-second": "truffle migrate --network mainnet -f 2 --to 2",
     "truffle:migrate-mainnet-third": "truffle migrate --network mainnet -f 3 --to 3",
-    "truffle:migrate-mainnet-fourth": "truffle migrate --network mainnet -f 4 --to 4"
+    "truffle:migrate-mainnet-fourth": "truffle migrate --network mainnet -f 4 --to 4",
+    "truffle:migrate-mainnet-fifth": "truffle migrate --network mainnet -f 5 --to 5"
   },
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "3.4.0",
