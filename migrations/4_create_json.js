@@ -18,23 +18,23 @@ module.exports = async function (deployer, network, accounts) {
 
     const exp = {
         'EcoFiERC1155': {
-            adress: c1.address,
+            address: c1.address,
             abi: c1.abi
         },
         'EcoFiExchangeV2': {
-            adress: c2.address,
+            address: c2.address,
             abi: c2.abi
         },
         'ERC20TransferProxy': {
-            adress: c3.address,
+            address: c3.address,
             abi: c3.abi
         },
         'NftTransferProxy': {
-            adress: c4.address,
+            address: c4.address,
             abi: c4.abi
         },
         'EcoRoyaltiesRegistry': {
-            adress: c5.address,
+            address: c5.address,
             abi: c5.abi
         }
     };

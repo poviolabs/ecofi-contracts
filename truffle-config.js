@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = {
   contracts_build_directory: path.join(__dirname, "frontend/src/contracts"),
-  plugins: ["truffle-contract-size"],
+  plugins: ["truffle-contract-size", "truffle-plugin-verify"],
   networks: {
     develop: {
       provider() {
@@ -78,5 +78,8 @@ module.exports = {
         }
       }
     }
-  }  
+  },
+  api_keys: {
+    etherscan: process.env.ETHERSCAN_API_KEY
+  }
 };
