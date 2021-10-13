@@ -18,8 +18,8 @@ contract ERC1155Image {
     }
 
     function _tokenImage(uint256 tokenId) internal view virtual returns (string memory) {
-        string memory _tokenImage = _tokenImages[tokenId];
-        return _tokenImage;
+        string memory tokenImage = _tokenImages[tokenId];
+        return tokenImage;
     }
 
     /**

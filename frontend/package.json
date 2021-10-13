@@ -33,7 +33,7 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "lint:fix": "tslint --fix -c tslint.json 'src/**/*.{ts,tsx}'",
-    "start": "react-app-rewired start",
+    "start": "PORT=3002 react-app-rewired start",
     "build": "react-app-rewired --max_old_space_size=4096 build"
   },
   "eslintConfig": {

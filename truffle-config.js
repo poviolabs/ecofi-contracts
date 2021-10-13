@@ -3,7 +3,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const path = require("path");
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "frontend/src/contracts"),
+  contracts_build_directory: path.join(__dirname, "frontend/src/contracts_rinkeby"),
   plugins: ["truffle-contract-size", "truffle-plugin-verify"],
   networks: {
     develop: {
@@ -36,14 +36,13 @@ module.exports = {
       provider() {
         // using wallet at index 1 ----------------------------------------------------------------------------------------v
         return new HDWalletProvider(
-          process.env.MAINNET_MNEMONIC,
-          "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY,
-          1
+          process.env.MAINNET_PK,
+          "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY
         );
       },
       network_id: 1,
-      // gas: 5561260
-      gasPrice: 42000000000 // 42 GWEI
+      //gas: 5561260,
+      gasPrice: 75000000000 // 70 GWEI
     },
     rinkeby: {
       provider() {
@@ -54,7 +53,7 @@ module.exports = {
       },
       network_id: 4,
       // gas: 4700000,
-      gasPrice: 200000000000 // 200 GWEI
+      gasPrice: 10000000000 // 10 GWEI
     },
     ropsten: {
       provider() {
@@ -64,7 +63,7 @@ module.exports = {
         );
       },
       network_id: 3,
-      gasPrice: 25000000000, // 25 GWEI
+      gasPrice: 10000000000, // 10 GWEI
       gas: 6721975
     }
   },

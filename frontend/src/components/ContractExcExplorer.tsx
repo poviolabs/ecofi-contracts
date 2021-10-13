@@ -14,7 +14,7 @@ import {
   Row
 } from "reactstrap";
 import config from "../config";
-import * as contractRoot from "../contracts/all.json";
+import * as contractRoot from "../contracts/all_3_n.json";
 
 const ETH_ASSET_CLASS = "0xaaaebeba";
 const ERC20_ASSET_CLASS = "0x8ae85d84";
@@ -115,25 +115,28 @@ function ContractExcExplorer(props) {
           let rinkebyProvider = new ethers.providers.JsonRpcProvider(
             "https://rinkeby.infura.io/v3/" + config.infuraKey
           );
-          let metamaskProvider = new ethers.providers.Web3Provider(
-            window.ethereum
-          );
           setWeb3Provider(rinkebyProvider);
-          setMetamaskProvider(metamaskProvider);
+          setRefreshingContract(true);
+          break;
+        case "ropsten":
+          let ropstenProvider = new ethers.providers.JsonRpcProvider(
+            "https://ropsten.infura.io/v3/" + config.infuraKey
+          );
+          setWeb3Provider(ropstenProvider);
           setRefreshingContract(true);
           break;
         case "localhost":
           let localProvider = new ethers.providers.JsonRpcProvider();
-          let metamaskProvider1 = new ethers.providers.Web3Provider(
-            window.ethereum
-          );
           setWeb3Provider(localProvider);
-          setMetamaskProvider(metamaskProvider1);
           setRefreshingContract(true);
           /* const addr = await metamaskProvider1.send('eth_requestAccounts', []);
             console.log(addr); */
           break;
       }
+      let metamaskProvider = new ethers.providers.Web3Provider(
+        window.ethereum
+      );
+      setMetamaskProvider(metamaskProvider);
     });
   };
 
@@ -217,7 +220,7 @@ function ContractExcExplorer(props) {
               [contractRoot.contracts['EcoFiERC1155'].address, sendId]
             )
           },
-          value: 1,
+          value: sendAmount,
         },
         taker: "0x0000000000000000000000000000000000000000",
         takeAsset: {
@@ -313,7 +316,7 @@ function ContractExcExplorer(props) {
               [contractRoot.contracts['EcoFiERC1155'].address, sendId]
             )
           },
-          value: 1,
+          value: sendAmount,
         },
         salt: Date.now(),
         start: 0,

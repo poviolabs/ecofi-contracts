@@ -8,14 +8,20 @@ import {
   Row
 } from 'reactstrap';
 import config from '../config';
-import * as contractRoot from '../contracts/all.json';
-;
+import * as contractRoot from '../contracts/all_3_n.json';
+import axios from 'axios';
+
+
 
 declare global {
   interface Window {
       ethereum:any;
   }
 }
+
+//const API_URL = "http://api.stg.hyp.eco";
+const API_URL = "http://10.0.0.199:3001";
+const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9hY2NvdW50IjozLCJpYXQiOjE2MzIyMTUzMTYsImV4cCI6MTYzMjgyMDExNiwic3ViIjoiMyJ9.0pWm659-2fTvxZdA6xWZso6NiD8N3pqmG6yoP6DZbkA";
 
 function ContractExplorer(props) {
 
@@ -36,7 +42,7 @@ function ContractExplorer(props) {
   const [inProgress, setInProgress] = useState(false);
 
   // froms
-  const [mintOwnerAddress, setMintOwnerAddress] = useState('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC');
+  const [mintOwnerAddress, setMintOwnerAddress] = useState('0x2A89aB3f1341D4761D6A8d2aB253D11e82af0aB5');
   const [mintQuantity, setMintQuantity] = useState('10');
   const [mintSupply, setMintSupply] = useState('10');
   const [mintId, setMintId] = useState('1');
@@ -59,21 +65,24 @@ function ContractExplorer(props) {
         switch (networkName) {
           case "rinkeby":
             let rinkebyProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.infura.io/v3/" + config.infuraKey);
-            let metamaskProvider = new ethers.providers.Web3Provider(window.ethereum);
             setWeb3Provider(rinkebyProvider);
-            setMetamaskProvider(metamaskProvider);
+            setRefreshingContract(true);
+          break;
+          case "ropsten":
+            let ropstenProvider = new ethers.providers.JsonRpcProvider("https://ropsten.infura.io/v3/" + config.infuraKey);
+            setWeb3Provider(ropstenProvider);
             setRefreshingContract(true);
           break;
           case "localhost":
             let localProvider = new ethers.providers.JsonRpcProvider();
-            let metamaskProvider1 = new ethers.providers.Web3Provider(window.ethereum);
             setWeb3Provider(localProvider);
-            setMetamaskProvider(metamaskProvider1);
             setRefreshingContract(true);
             /* const addr = await metamaskProvider1.send('eth_requestAccounts', []);
             console.log(addr); */
           break;
         }
+        let metamaskProvider = new ethers.providers.Web3Provider(window.ethereum);
+        setMetamaskProvider(metamaskProvider);
         })
   }
 
@@ -152,6 +161,13 @@ function ContractExplorer(props) {
 
   } */
 
+  //const NFTs = [255, 258, 248];
+  // OK 60, 59, 57, 26, 58, 56, 42, 31, 30, 29, 25, 27, 24
+  // NOK 
+  const NFTs = [24, 27, 26, 25, 29, 30, 31, 42, 56, 57, 58, 59, 60];
+  //const NFTs = [59];
+  //const NFTs = [75, 74, 65, 55, 50, 49, 47, 43, 46, 41, 40, 39, 36, 35, 33, 34]; // community
+
   const handleMintToken = async (event) => {
     event.preventDefault(); 
     setInProgress(true);
@@ -168,15 +184,198 @@ function ContractExplorer(props) {
       );
 
       const signer = metamaskProvider.getSigner(accounts[0]);
-      const id = BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266').toHexString();
+      /* const nonce = await axios.get(`${API_URL}/account/nonce`,{params: {publicAddress: accounts[0]}});
+      
+      const signature = await signer.signMessage(nonce.data.nonce);
+      const login = await axios.get(`${API_URL}/account/auth/login`,{params: {publicAddress: accounts[0], signature}});
+      console.log(login); */
+
+      var mintedNFTs = []; 
+
+      for (let index = 0; index < NFTs.length; index++) {
+        const nftid = NFTs[index];
+        const { newNft, oldNft } = await createDetailsAboutNft(nftid);
+
+        const tokenId = BigNumber.from(accounts[0])
+        .shl(96)
+        .add(Date.now())
+        .toHexString();
+        
+        
+        let data = {
+          tokenId: `0x${tokenId}`,
+          tokenURI: `/ipfs/${newNft.ipfsHash}`,
+          supply: newNft.pieces,
+          creators: [
+            {account: accounts[0], value: 10000}
+          ],
+          royalties: [
+            {account: oldNft.createdByAddress, value: newNft.royalties * 100}
+          ]
+        };
+
+        console.log(data);
+
+        const msgParams = JSON.stringify(data);
+
+        const mm = await signer.signMessage(msgParams);
+
+        /* console.log('Miting', {
+          ...data,
+          signatures: [
+            mm
+          ]
+        },
+        '',
+        oldNft.createdByAddress, 
+        newNft.pieces); */
+
+        let nftData = {
+          ...data,
+          signatures: [
+            mm
+          ]
+        }
+
+        //return;
+
+        /*  result = await contract.mint( {
+          ...data,
+          signatures: [
+            mm
+          ]
+        },
+        '',
+        oldNft.createdByAddress, 
+        newNft.pieces); */
+
+        //await result.wait();
+
+        let addresses = [];
+        let amounts = [];
+
+        oldNft.wallets.map(async wallet => {
+          addresses.push(wallet.accountAddress);
+          amounts.push(wallet.piecesInWallet);
+          //if(wallet.accountAddress !== accounts[0]) {
+            /* let trans = await contract.mintAndTransfer(nftData, wallet.accountAddress, wallet.piecesInWallet);
+            await trans.wait(); */
+          //}
+        });
+        
+        console.log('Minting', newNft.idHyperobject);
+
+        let trans = await contract.batchMintAndTransfer(nftData, addresses, amounts);
+        await trans.wait();
+
+        await updateNft(newNft, trans.hash, tokenId);
+
+        console.log('Updated NFT', newNft);
+
+        mintedNFTs.push(newNft.idHyperobject);
+        
+        //console.table([addresses, amounts])
+        //console.log('Minting', nftData, addresses, amounts);
+        //console.log('Sum', newNft.pieces, amounts.reduce((prev, curr) => prev + curr));
+        //console.log('Opensea', `https://opensea.io/assets/0xc4482e57ecf3e6a33ed5147fa2142dd0a9f1272d/${newNft.tokenId}`)
+      }
+
+      console.log("All minted", mintedNFTs);
+
+      // const allow = await contract.
+    } catch (e) {
+      result = e;
+    }
+
+    try {
+    setLogText(result.message.toString());
+    } catch (e) {}
+    setInProgress(false);
+               
+  }
+
+  const createDetailsAboutNft = async (nftId) => {
+    const getResponse = await axios.get(`${API_URL}/hyperobject/${nftId}`);
+    const nft = getResponse.data;
+
+    const getIpfsData = await axios.get(nft.nftToken);
+    const ipfsData = getIpfsData.data;
+
+    const createResponse = await axios.post(`${API_URL}/hyperobject/new`, {
+      categoryId: nft.idCategory,
+      artistId: nft.artist.idArtist,
+      mediumId: nft.mediumId,
+      artistName: nft.artistName,
+      description: nft.description,
+      notes: nft.notes,
+      name: nft.name,
+      photo: nft.photo,
+      photoSmall: nft.photoSmall,
+      photoMedium: nft.photoMedium,
+      photoIpfs: ipfsData.image,
+      pieces: nft.pieces,
+      isDigital: nft.isDigital,
+      width: Number(nft.width),
+      height: Number(nft.height),
+      yearOfArtworkCreation: nft.yearOfArtworkCreation,
+      royalties: Number(nft.royalties),
+      unit: nft.unit,
+      contractAddress: '0xA02A1d3A3Bb63F1CdEfFB2d23483C8a34258f247' // mainnet ecofi
+      //contractAddress: '0x3d10755D249C05161D9aea30eb61be95E40dF90c' // mainnet ecofi community
+    }, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+
+    //return {newNft: nft, oldNft: nft};
+    return {newNft: createResponse.data, oldNft: nft};
+  }
+
+  const updateNft = async (newNft, transactionId, tokenId) => {
+    await axios.patch(`${API_URL}/hyperobject/update-ids/${newNft.idHyperobject}`, {
+      transactionId,
+      tokenId,
+    }, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+
+    /* await axios.patch(`${API_URL}/hyperobject/update-status/${newNft.idHyperobject}`, {
+      
+    }, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    }); */
+  }
+
+  const handleBurnToken = async (event) => {
+    event.preventDefault(); 
+    setInProgress(true);
+
+    setLogText(`Minting ${mintQuantity} tokens for address ${mintOwnerAddress}...`);
+    setReceiptLink(null);
+
+    let result;
+
+    try {
+
+      const accounts = await metamaskProvider.send(
+        'eth_requestAccounts', null
+      );
+
+      const signer = metamaskProvider.getSigner(accounts[0]);
+      /* const id = BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266').toHexString();
       console.log(BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266').toHexString());
       console.log(BigNumber.from(mintOwnerAddress).shl(96).toHexString());
-      console.log(BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266').shr(96).toHexString());
+      console.log(BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266').shr(96).toHexString()); */
       //console.log(ethers.utils.formatBytes32String('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' + BigNumber.from(mintId).sh()));
 
       let data = {
         tokenId: BigNumber.from(mintOwnerAddress).shl(96).add(mintId).toHexString(),
-        uri: 'Nekaj',
+        tokenURI: 'Nekaj',
         supply: mintSupply,
         creators: [
           {account: mintOwnerAddress, value: 10000}

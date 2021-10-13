@@ -6,7 +6,7 @@ import {
   TabContent, TabPane
 } from 'reactstrap';
 import config from '../config';
-import * as contractRoot from '../contracts/all.json';
+import * as contractRoot from '../contracts/all_3_n.json';
 import { ContractExcExplorer } from './ContractExcExplorer';
 import { ContractExplorer } from './ContractExplorer';
 
@@ -48,21 +48,24 @@ function ContractLayout() {
         switch (networkName) {
           case "rinkeby":
             let rinkebyProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.infura.io/v3/" + config.infuraKey);
-            let metamaskProvider = new ethers.providers.Web3Provider(window.ethereum);
             setWeb3Provider(rinkebyProvider);
-            setMetamaskProvider(metamaskProvider);
+            setRefreshingContract(true);
+          break;
+          case "ropsten":
+            let ropstenProvider = new ethers.providers.JsonRpcProvider("https://ropsten.infura.io/v3/" + config.infuraKey);
+            setWeb3Provider(ropstenProvider);
             setRefreshingContract(true);
           break;
           case "localhost":
             let localProvider = new ethers.providers.JsonRpcProvider();
-            let metamaskProvider1 = new ethers.providers.Web3Provider(window.ethereum);
             setWeb3Provider(localProvider);
-            setMetamaskProvider(metamaskProvider1);
             setRefreshingContract(true);
             /* const addr = await metamaskProvider1.send('eth_requestAccounts', []);
             console.log(addr); */
           break;
         }
+        let metamaskProvider = new ethers.providers.Web3Provider(window.ethereum);
+        setMetamaskProvider(metamaskProvider);
         })
   }
 
@@ -97,7 +100,7 @@ function ContractLayout() {
   }
 
   useEffect(() => {
-      setActiveTab('EcoFiExchangeV2');
+      setActiveTab('EcoFiERC1155');
 
       // on first call, initialize web3Provider
       if (web3Provider === null)
@@ -105,7 +108,7 @@ function ContractLayout() {
       
       if (refreshingContract)
       {
-        refreshContract('EcoFiExchangeV2');
+        //refreshContract('EcoFiExchangeV2');
       }
     }, [refreshingContract]);
 

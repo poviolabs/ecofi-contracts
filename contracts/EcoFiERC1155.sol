@@ -27,7 +27,7 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
         emit CreateEcoFiERC1155(_msgSender(), _name, _symbol);
     }
 
-    function mintWithImage(LibERC1155LazyMint.Mint1155Data memory data, string memory image, address to, uint256 _amount) public virtual {
+    function mintWithImage(LibERC1155LazyMint.Mint1155Data memory data, string memory image, address to, uint256 _amount) public virtual onlyOwner {
         address minter = address(data.tokenId >> 96);
         address sender = _msgSender();
 
@@ -55,6 +55,20 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
         }
 
         _mint(to, data.tokenId, _amount, "");
+    }
+
+    function mintAndTransfer(LibERC1155LazyMint.Mint1155Data memory data, address to, uint256 _amount) public override onlyOwner {
+        super.mintAndTransfer(data, to, _amount);
+    }
+
+    function batchMintAndTransfer(LibERC1155LazyMint.Mint1155Data memory data, address[] memory tos, uint256[] memory _amounts) public onlyOwner {
+        require(tos.length == _amounts.length, "ERC1155: addresses and amounts length mismatch");      
+        for (uint256 i = 0; i < tos.length; ++i) {
+            address to = tos[i];
+            require(to != address(0), "ERC1155: transfer to the zero address");
+            uint256 _amount = _amounts[i];
+            mintAndTransfer(data, to, _amount);
+        }
     }
 
     uint256[50] private __gap;

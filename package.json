@@ -14,14 +14,21 @@
     "truffle:contract-size": "truffle run contract-size --contracts EcoFiERC1155 EcoFiExchangeV2 SproutToken EcoToken",
     "truffle:compile": "truffle compile",
     "truffle:verify-ropsten": "truffle run verify EcoFiERC1155 --debug --network ropsten",
+    "truffle:verify-ropsten2": "truffle run verify EcoFiCommunityERC1155 --debug --network ropsten",
+    "truffle:verify-ropsten3": "truffle run verify EcoFiHOERC1155 --debug --network ropsten",
+    "truffle:verify-rinkeby": "truffle run verify EcoFiExchangeV2 --debug --network rinkeby",
+    "truffle:verify-rinkeby2": "truffle run verify EcoFiCommunityERC1155 --debug --network rinkeby",
+    "truffle:verify-rinkeby3": "truffle run verify EcoFiHOERC1155 --debug --network rinkeby",
     "truffle:deploy-ropsten": "truffle deploy --network ropsten",
     "truffle:verify-mainnet": "truffle run verify EcoFiERC1155 --network mainnet",
-    "truffle:migrate-ropsten": "truffle migrate --network ropsten -f 2 --to 2",
+    "truffle:verify-mainnet2": "truffle run verify EcoFiCommunityERC1155 --network mainnet",
+    "truffle:migrate-rinkeby": "truffle migrate --network rinkeby -f 8 --to 8",
+    "truffle:migrate-ropsten": "truffle migrate --network ropsten -f 8 --to 8",
     "truffle:migrate-mainnet-first": "truffle migrate --network mainnet -f 1 --to 1",
     "truffle:migrate-mainnet-second": "truffle migrate --network mainnet -f 2 --to 2",
     "truffle:migrate-mainnet-third": "truffle migrate --network mainnet -f 3 --to 3",
     "truffle:migrate-mainnet-fourth": "truffle migrate --network mainnet -f 4 --to 4",
-    "truffle:migrate-mainnet-fifth": "truffle migrate --network mainnet -f 5 --to 5"
+    "truffle:migrate-mainnet-nft": "truffle migrate --network mainnet -f 8 --to 8"
   },
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "3.4.0",
