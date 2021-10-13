@@ -3,7 +3,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const path = require("path");
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "frontend/src/contracts_rinkeby"),
+  contracts_build_directory: path.join(__dirname, "frontend/src/contracts_main"),
   plugins: ["truffle-contract-size", "truffle-plugin-verify"],
   networks: {
     develop: {
