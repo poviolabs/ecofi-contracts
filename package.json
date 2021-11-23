@@ -23,7 +23,7 @@
     "truffle:verify-mainnet": "truffle run verify EcoFiERC1155 --network mainnet",
     "truffle:verify-mainnet2": "truffle run verify EcoFiCommunityERC1155 --network mainnet",
     "truffle:verify-mainnet3": "truffle run verify EcoFiHOERC1155 --network mainnet",
-    "truffle:migrate-rinkeby": "truffle migrate --network rinkeby -f 8 --to 8",
+    "truffle:migrate-rinkeby": "truffle migrate --network rinkeby -f 4 --to 4",
     "truffle:migrate-ropsten": "truffle migrate --network ropsten -f 8 --to 8",
     "truffle:migrate-mainnet-first": "truffle migrate --network mainnet -f 1 --to 1",
     "truffle:migrate-mainnet-second": "truffle migrate --network mainnet -f 2 --to 2",

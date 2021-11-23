@@ -42,7 +42,7 @@ module.exports = {
       },
       network_id: 1,
       //gas: 5561260,
-      gasPrice: 75000000000 // 70 GWEI
+      gasPrice: 75000000000 // 75 GWEI
     },
     rinkeby: {
       provider() {
