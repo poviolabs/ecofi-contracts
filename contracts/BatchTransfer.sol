@@ -2,7 +2,7 @@
 
 pragma solidity >=0.6.2 <0.8.0;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "protocol-contracts/tokens/contracts/erc-1155/ERC1155Base.sol";
 
 contract BatchTransfer {
     /// @notice Tokens on the given ERC-1155 contract are transferred from you to the recipients.
@@ -16,7 +16,7 @@ contract BatchTransfer {
 
 
         for (uint256 index; index < recipients.length; index++) {
-            ERC1155(contractAddress).safeTransferFrom(msg.sender, recipients[index], tokenIds[index], amounts[index], "");
+            ERC1155Base(contractAddress).safeTransferFrom(msg.sender, recipients[index], tokenIds[index], amounts[index], "");
         }
     }
 }
