@@ -16,4 +16,9 @@ module.exports = async function (deployer, network, accounts) {
 
     // Tow
     //await nftC.__EcoFiERC1155_init('Title of Work', 'TOW', 'ipfs:/', 'https://stg.hyp.eco', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
+
+    // SKALE - beautiful-rasalgethi
+    //await nftC.__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://stg.hyp.eco', '0xcAA8ff8a8E93f1c17Cc59F70b129C49168631671'); // SKALE - beautiful-rasalgethi
+    //await nftC.__EcoFiERC1155_init('Raw', 'RAW', 'ipfs:/', 'https://stg.hyp.eco', '0xcAA8ff8a8E93f1c17Cc59F70b129C49168631671'); // SKALE - beautiful-rasalgethi
+    //await nftC.__EcoFiERC1155_init('Title of Work', 'TOW', 'ipfs:/', 'https://stg.hyp.eco', '0xcAA8ff8a8E93f1c17Cc59F70b129C49168631671'); // SKALE - beautiful-rasalgethi
 };

@@ -65,6 +65,16 @@ module.exports = {
       network_id: 3,
       gasPrice: 10000000000, // 10 GWEI
       gas: 6721975
+    },
+    skale_testnet: {
+      provider() {
+        return new HDWalletProvider(
+          process.env.TESTNET_PK,
+         'https://dappnet-api.skalenodes.com/v1/beautiful-rasalgethi'
+        );
+      },
+      gasPrice: 100000,
+      network_id: "*"
     }
   },
   compilers: {
