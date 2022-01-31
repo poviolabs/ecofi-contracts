@@ -14,7 +14,6 @@ contract BatchTransfer {
             "BatchTransfer: invalid array data"
         );
 
-
         for (uint256 index; index < recipients.length; index++) {
             ERC1155Base(contractAddress).safeTransferFrom(msg.sender, recipients[index], tokenIds[index], amounts[index], "");
         }
