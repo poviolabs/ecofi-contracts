@@ -16,9 +16,6 @@ contract BatchTransfer {
 
 
         for (uint256 index; index < recipients.length; index++) {
-            uint256 fromBalance = ERC1155Base(contractAddress).balanceOf(msg.sender, tokenIds[index]);
-            require(fromBalance >= amounts[index], "BatchTransfer: insufficient balance for transfer");
-
             ERC1155Base(contractAddress).safeTransferFrom(msg.sender, recipients[index], tokenIds[index], amounts[index], "");
         }
     }
