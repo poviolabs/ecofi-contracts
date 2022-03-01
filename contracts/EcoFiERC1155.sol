@@ -27,15 +27,15 @@ contract EcoFiERC1155 is ERC1155Base, ERC1155Image {
         emit CreateEcoFiERC1155(_msgSender(), _name, _symbol);
     }
 
-    function setBaseURI(string baseURI) public onlyOwner {
+    function setBaseURI(string memory baseURI) public onlyOwner {
         _setBaseURI(baseURI);
     }
 
-    function setContractURI(string contractURI) public onlyOwner {
+    function setContractURI(string memory contractURI) public onlyOwner {
         _setContractURI(contractURI);
     }
 
-    function setDefaultApproval(address operator, bool hasApproval) public onlyOwner {
+    function setDefaultApproval(address memory operator, bool memory hasApproval) public onlyOwner {
         _setDefaultApproval(operator, hasApproval);
     }
 
