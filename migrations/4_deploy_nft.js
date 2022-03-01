@@ -11,6 +11,10 @@ module.exports = async function (deployer, network, accounts) {
     //await nftC.__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://stg.hyp.eco', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
     //await nftC.__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://hyp.eco', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
 
+    // Arius
+    //await nftC.__EcoFiERC1155_init('Arius', 'ART', 'ipfs:/', 'https://stg.arius.one', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
+    //await nftC.__EcoFiERC1155_init('Arius', 'ART', 'ipfs:/', 'https://arius.one', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
+
     // Raw
     //await nftC.__EcoFiERC1155_init('Raw', 'RAW', 'ipfs:/', 'https://stg.hyp.eco', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
 
