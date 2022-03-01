@@ -27,6 +27,14 @@ contract EcoFiHOERC1155 is ERC1155Base, ERC1155Image {
         emit CreateEcoFiERC1155(_msgSender(), _name, _symbol);
     }
 
+    function setBaseURI(string memory baseURI) public virtual onlyOwner {
+        _setBaseURI(baseURI);
+    }
+
+    function setContractURI(string memory contractURI) public virtual onlyOwner {
+        _setContractURI(contractURI);
+    }
+
     function mintWithImage(LibERC1155LazyMint.Mint1155Data memory data, string memory image, address to, uint256 _amount) public virtual onlyOwner {
         address minter = address(data.tokenId >> 96);
         address sender = _msgSender();
