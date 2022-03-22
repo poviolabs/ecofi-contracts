@@ -17,11 +17,16 @@ module.exports = async function (deployer, network, accounts) {
 
     // Raw
     //await nftC.__EcoFiERC1155_init('Raw', 'RAW', 'ipfs:/', 'https://stg.arius.one/raw', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
-    await nftC.__EcoFiERC1155_init('Raw', 'RAW', 'ipfs:/', 'https://arius.one/raw', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
+    //await nftC.__EcoFiERC1155_init('Raw', 'RAW', 'ipfs:/', 'https://arius.one/raw', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
 
     // Tow
     //await nftC.__EcoFiERC1155_init('Title of Work', 'TOW', 'ipfs:/', 'https://stg.arius.one/tow', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
     //await nftC.__EcoFiERC1155_init('Title of Work', 'TOW', 'ipfs:/', 'https://stg.arius.one/tow', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
+
+    // Qmplete
+    //await nftC.__EcoFiERC1155_init('Qmplete', 'QMP', 'ipfs:/', 'https://stg.arius.one/qmplete', '0x3026c12a297DB3eab4e89fFCCd1A7818a7Ca306f'); // Rinkeby
+    //await nftC.__EcoFiERC1155_init('Qmplete', 'QMP', 'ipfs:/', 'https://arius.one/qmplete', '0x9d523C3908Bfa05e19E124645E606977ff9B0400'); // Mainnet
+
 
     // SKALE - beautiful-rasalgethi
     //await nftC.__EcoFiERC1155_init('HypE', 'HYP', 'ipfs:/', 'https://stg.hyp.eco', '0xcAA8ff8a8E93f1c17Cc59F70b129C49168631671'); // SKALE - beautiful-rasalgethi
